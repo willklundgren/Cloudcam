@@ -1,4 +1,4 @@
-# CloudCam
+# Cloudcam
 Cloud-enabled security camera for people detection.
 
 Prerequisites:
