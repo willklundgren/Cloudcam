@@ -1,8 +1,9 @@
 from picamera import PiCamera
-from time import sleep
+import time
 from tflite_runtime.interpreter import Interpreter
 import cv2
 import numpy as np
+from VideoStream import VideoStream
 
 # Set minimum confidence level required to draw bounding box; default is 70%
 minimum_confidence = 0.70
@@ -13,14 +14,21 @@ with open( "./Sample_TFLite_model/labelmap.txt" ) as file:
     if labels[0] == '???':
         del(labels[0])
 
-print("Taking a single picture...")
+######################################################
 
-camera = PiCamera()
-# camera.start_preview()
-sleep(1)
-camera.capture("./pi_camera_test_pic_debug.jpg")
-sleep(1)
-# camera.stop_preview()
+# Getting the video stream
+video_handler = VideoStream()
+
+for frame in video_handler.capture_stream():
+
+    image = frame.array
+    cv2.imwrite("./video_stream_test.jpg", image)
+
+    # Clear stream for next frame
+    video_handler.array_capture.truncate(0)
+    time.sleep(3)
+
+#######################################################
 
 print("Loading model into interpreter...")
 interpreter = Interpreter(model_path = "./Sample_TFLite_model/detect.tflite")
