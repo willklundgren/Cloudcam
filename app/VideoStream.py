@@ -15,4 +15,3 @@ class VideoStream():
     def capture_stream(self):
         # Call capture_continuous here
         return self.camera.capture_continuous(self.array_capture, format="bgr", use_video_port=True)
-        
