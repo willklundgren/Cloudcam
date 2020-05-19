@@ -1,5 +1,6 @@
 # Handle D2C here
 from azure.iot.device.aio import IoTHubDeviceClient
+from azure.iot.device import Message
 import asyncio
 
 class CloudManager():
@@ -11,8 +12,14 @@ class CloudManager():
     async def connect(self):
          await self.device_client.connect()
         
-    async def send_message(self, message):
-        await self.device_client.send_message(message)
+    async def send_message(self, confidence, message):
+        
+        confidence_percentage = str(round(confidence * 100, 1)) + '%'
+        # Give detection info: timestamp, confidence, message
+        D2C_message = Message(message)
+        D2C_message.custom_properties["Confidence"] = confidence_percentage
+        
+        await self.device_client.send_message(D2C_message)
 
     async def disconnect(self):
         await self.device_client.disconnect()

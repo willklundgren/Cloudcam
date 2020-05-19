@@ -12,19 +12,8 @@ async def main():
     # Set minimum confidence level required to draw bounding box; default is 60%
     minimum_confidence = 0.60
 
-    ####################
-
-    # INSTANTIATE CloudManager here
-
     cloud_manager = CloudManager()
-    
     await cloud_manager.connect()
-
-    await cloud_manager.send_message("Greetings - you've made it.")
-
-    await cloud_manager.disconnect()
-
-    ####################
 
     # Read label file and load labels into a variable
     with open( "./Sample_TFLite_model/labelmap.txt" ) as file:
@@ -71,7 +60,7 @@ async def main():
             object_detected = labels[ int(classes[i]) ]
             confidence = scores[i]
 
-            if confidence > minimum_confidence and object_detected == "person":
+            if confidence > minimum_confidence and object_detected == "person": # can omit section after "and" to detect multiple objects
 
                 frame_counter += 1
 
@@ -94,14 +83,9 @@ async def main():
 
                 # SEND TO CLOUD HERE
 
-
-
-
-
-
-
-
-
+                # Create and send message to cloud
+                D2C_message = f"Detected {object_detected}"
+                await cloud_manager.send_message(confidence, D2C_message)
 
                 #################################
 
