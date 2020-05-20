@@ -79,13 +79,15 @@ async def main():
                 # cv2.imshow("Inference Result", image)
                 cv2.imwrite( f"./cv2_test_image{frame_counter}.jpg", image) # for saving the image
 
-                ##########################################
-
-                # SEND TO CLOUD HERE
-
                 # Create and send message to cloud
                 D2C_message = f"Detected {object_detected}"
                 await cloud_manager.send_message(confidence, D2C_message)
+
+                ################################
+                # Send associated picture to cloud here
+
+                # (Call relevant CloudManager method here)
+                await cloud_manager.store_in_blob("BusinessWoman.jpg")
 
                 #################################
 
