@@ -6,11 +6,22 @@ import numpy as np
 from VideoStream import VideoStream
 from CloudManager import CloudManager
 import asyncio
+import os
 
 async def main():
 
     # Set minimum confidence level required to draw bounding box; default is 60%
     minimum_confidence = 0.60
+    # Set image folder (folder will be mirrored on the cloud); should be determined before running; default is 0
+    image_folder_number = 0
+    path = f"./cloudcam_session{image_folder_number}"
+    while os.path.isdir(path) or os.path.isfile(path):
+        print("Incrementing folder number")
+        image_folder_number += 1
+        path = f"./cloudcam_session{image_folder_number}"
+        print(image_folder_number)
+        
+    os.mkdir(f"./cloudcam_session{image_folder_number}")
 
     cloud_manager = CloudManager()
     await cloud_manager.connect()
@@ -75,25 +86,27 @@ async def main():
                 x_upper = int( max(image_columns , (boxes[i][3] * image_columns) ) )
 
                 # Draw bounding box on the image
-                cv2.rectangle(image, (x_lower, y_lower), (x_upper, y_upper), (255, 0, 0), 2)
+                cv2.rectangle(image, (x_lower, y_lower), (x_upper, y_upper), (255, 0, 0), 3)
                 # cv2.imshow("Inference Result", image)
-                cv2.imwrite( f"./cv2_test_image{frame_counter}.jpg", image) # for saving the image
+                new_image_path = f"cloudcam_session{image_folder_number}/cloudcam_image{frame_counter}.jpg"
+                
+                print("Saving image locally to Pi...")
+                cv2.imwrite(new_image_path, image) # Can disable if Pi memory is constrained
+                confidence_string = str(round(confidence * 100, 1)) + '%'
 
                 # Create and send message to cloud
                 D2C_message = f"Detected {object_detected}"
-                await cloud_manager.send_message(confidence, D2C_message)
-
-                ################################
-                # Send associated picture to cloud here
-
-                # (Call relevant CloudManager method here)
-                await cloud_manager.store_in_blob("BusinessWoman.jpg")
-
-                #################################
+                await cloud_manager.send_message(confidence_string, D2C_message)
+                await cloud_manager.store_in_blob(new_image_path, confidence_string)
+                
 
         # Clear stream for next frame
         video_handler.array_capture.truncate(0)
         time.sleep(2)
+    
+    # NEED A WAY TO ACTUALLY GET HERE - WHEN PROGRAM IS STOPPED, THE BELOW 2 LINES NEVER RUN.
+    print("Disconnecting from IoT Hub...")
+    await cloud_manager.disconnect()
 
-if __name__ == '__main__':
+if __name__ == '__main__':   
     asyncio.run(main())

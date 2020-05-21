@@ -3,3 +3,4 @@ send_contents.ps1
 /scripts
 /testing
 /app/*.jpg
+/app/useful.txt
