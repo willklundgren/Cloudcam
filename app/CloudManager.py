@@ -3,12 +3,13 @@ from azure.iot.device.aio import IoTHubDeviceClient
 from azure.iot.device import Message
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import asyncio
+import config
 
 class CloudManager():
 
     def __init__(self):
         print("Created CloudManager")
-        self.device_client = IoTHubDeviceClient.create_from_connection_string("HostName=test-projects-iot-hub.azure-devices.net;DeviceId=rpi3_cloudcam;SharedAccessKey=9YVbYWZ+Z/0MFw7Q+4H6Wb8uFa4ETHvdYWwi1hEIBNc=")
+        self.device_client = IoTHubDeviceClient.create_from_connection_string(config.azure["iot_hub_conn_str"])
         
     async def connect(self):
          await self.device_client.connect()

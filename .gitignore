@@ -4,3 +4,4 @@ send_contents.ps1
 /testing
 /app/*.jpg
 /app/useful.txt
+/app/config.py
