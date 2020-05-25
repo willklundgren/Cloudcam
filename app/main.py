@@ -52,7 +52,7 @@ async def main():
 
         image = frame.array
         print("Performing image pre-processing...")
-        # image_path = "./BusinessWoman3.jpg" # Change accordingly
+        # image_path = "./<YOUR TEST IMAGE>.jpg" # Can change accordingly
         # image = cv2.imread( image_path )
         image_rgb = cv2.cvtColor( image, cv2.COLOR_BGR2RGB )
         image_rows, image_columns, image_color_channels = image.shape # Get original image height / width information
@@ -91,7 +91,7 @@ async def main():
                 new_image_path = f"cloudcam_session{image_folder_number}/cloudcam_image{frame_counter}.jpg"
                 
                 print("Saving image locally to Pi...")
-                cv2.imwrite(new_image_path, image) # Can disable if Pi memory is constrained
+                cv2.imwrite(new_image_path, image) # Can disable if Pi's memory is constrained
                 confidence_string = str(round(confidence * 100, 1)) + '%'
 
                 # Create and send message to cloud
@@ -103,10 +103,6 @@ async def main():
         # Clear stream for next frame
         video_handler.array_capture.truncate(0)
         time.sleep(2)
-    
-    # NEED A WAY TO ACTUALLY GET HERE - WHEN PROGRAM IS STOPPED, THE BELOW 2 LINES NEVER RUN.
-    print("Disconnecting from IoT Hub...")
-    await cloud_manager.disconnect()
 
 if __name__ == '__main__':   
     asyncio.run(main())

@@ -19,7 +19,6 @@ class CloudManager():
         # Give detection info: timestamp, confidence, message
         D2C_message = Message(message)
         D2C_message.custom_properties["Confidence"] = confidence
-
         await self.device_client.send_message(D2C_message)
 
     async def store_in_blob(self, filename, confidence):
@@ -30,7 +29,7 @@ class CloudManager():
             blob_storage_info["blobName"],
             blob_storage_info["sasToken"]
         )
-        print(f"Upload SAS token: {sas_url} \n")
+        # print(f"Upload SAS token: {sas_url} \n") # For testing (contains SAS token)
         confidence_metadata = dict(confidence=confidence)
         print("Uploading picture to blob storage...")
         with BlobClient.from_blob_url(sas_url) as blob_storage_client:
@@ -38,5 +37,5 @@ class CloudManager():
                 result = blob_storage_client.upload_blob(data=picture , metadata=confidence_metadata )
                 return result
 
-    async def disconnect(self):
+    async def disconnect(self): # Currently unused
         await self.device_client.disconnect()

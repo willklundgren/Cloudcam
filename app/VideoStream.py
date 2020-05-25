@@ -3,6 +3,8 @@ from picamera.array import PiRGBArray
 import time
 import cv2
 
+# Can edit this file based on video source, e.g. for a USB webcam
+
 class VideoStream():
 
     # Upon initialization, create a video stream
