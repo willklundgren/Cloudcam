@@ -1,0 +1,6 @@
+opencv-python==3.4.6.27
+azure-iot-device==2.1.2
+numpy==1.16.2
+picamera==1.13
+azure-storage-blob==12.3.1
+
